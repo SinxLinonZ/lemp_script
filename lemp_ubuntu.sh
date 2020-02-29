@@ -1,25 +1,43 @@
 #!/bin/bash
 
+read -s -p "Your mysql root password: " mysql_root_passwd
+echo
+read -s -p "Comfirm:  " mysql_root_passwd_confirm
+echo
+
+until [ $mysql_root_passwd == $mysql_root_passwd_confirm && $mysql_root_passwd != '' ]
+do
+	echo "The password and the confirmation you typed do not match."
+	read -s -p "Retype your mysql root password: " mysql_root_passwd
+	echo
+	read -s -p "Comfirm:  " mysql_root_passwd_confirm
+	echo
+done
+
+
 apt update
-apt upgrade
+apt upgrade -y
 
-apt install nginx
 systemctl stop ufw
-systemctl stop iptable
 systemctl disable ufw
-systemctl disable iptable
 
-apt install mysql-server
-mysql_secure_installation
+apt install nginx -y
+systemctl start nginx
+systemctl enable nginx
 
-echo "SELECT user,authentication_string,plugin,host FROM mysql.user;"
-echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';"
-echo "FLUSH PRIVILEGES;"
+apt install mysql-server -y
 
-mysql
+mysql << EOF
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${mysql_root_passwd}';
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+FLUSH PRIVILEGES;
+EOF
 
 add-apt-repository universe
-apt install php-fpm php-mysql
+apt install php-fpm php-mysql -y
 
 cd /etc/nginx/sites-enabled/
 unlink default
@@ -49,7 +67,7 @@ EOF
 
 ln -s /etc/nginx/sites-available/test.conf /etc/nginx/sites-enabled/
 
-systemctl reload nginx
+systemctl restart nginx
 
 
 cd /var/www/html/

@@ -5,7 +5,7 @@ echo
 read -s -p "Comfirm:  " mysql_root_passwd_confirm
 echo
 
-until [ $mysql_root_passwd == $mysql_root_passwd_confirm && $mysql_root_passwd != '' ]
+until [ $mysql_root_passwd == $mysql_root_passwd_confirm -a $mysql_root_passwd != '' ]
 do
 	echo "The password and the confirmation you typed do not match."
 	read -s -p "Retype your mysql root password: " mysql_root_passwd

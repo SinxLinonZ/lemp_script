@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if (whoami != root)
+	then echo "Please run as root"
+	exit
+fi
+
+
 read -s -p "Your mysql root password: " mysql_root_passwd
 echo
 read -s -p "Comfirm:  " mysql_root_passwd_confirm

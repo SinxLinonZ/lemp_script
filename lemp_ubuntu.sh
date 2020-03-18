@@ -282,6 +282,9 @@ read
 #   deployment
 #-----------------------------
 
+#update list
+apt update
+
 #   update system
 if [[ $sys_if_update_system == 'y' ]]
 then

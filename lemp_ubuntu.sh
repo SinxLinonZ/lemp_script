@@ -35,7 +35,7 @@ ufw_open_port() {
 db_mysql_init() {
 	if [[ $1 == 'n' && $2 == 'y' ]]
 	then
-		mysql_host="UPDATE user SET host = '%' WHERE user = 'root';"
+		mysql_host="UPDATE mysql.user SET host = '%' WHERE user = 'root';"
 		mysql_P="ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '${db_root_passwd}';"
 	elif [[ $1 == 'n' && $2 == 'n' ]]
 	then
@@ -55,7 +55,7 @@ EOF
 db_mariadb_init() {
 	if [[ $1 == 'n' && $2 == 'y' ]]
 	then
-		mariadb_host="UPDATE user SET host = '%' WHERE user = 'root';"
+		mariadb_host="UPDATE mysql.user SET host = '%' WHERE user = 'root';"
 		mariadb_Pw="UPDATE mysql.user SET authentication_string = PASSWORD('${db_root_passwd}') WHERE User = 'root';"
 		mariadb_Pl="UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE User = 'root';"
 	elif [[ $1 == 'n' && $2 == 'n' ]]
@@ -376,7 +376,7 @@ server {
 }
 EOF
 
-ln -s /etc/nginx/sites-available/test.conf /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/auto_deploy.conf /etc/nginx/sites-enabled/
 
 systemctl restart nginx
 
